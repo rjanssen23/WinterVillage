@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Water
+    uniqueID: 3504589351
+    locked: 0
+  - name: Ground
+    uniqueID: 1730812567
+    locked: 0
+  - name: Vegetation
+    uniqueID: 1107074783
+    locked: 0
+  - name: voorlLayerHome
+    uniqueID: 3283125
+    locked: 0
+  - name: voorvoorLayerHome
+    uniqueID: 3634692635
+    locked: 0
+  - name: Scene2
+    uniqueID: 1118783899
+    locked: 0
+  m_RenderingLayers:
+  - Default
