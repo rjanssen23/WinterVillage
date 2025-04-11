@@ -7,6 +7,11 @@ public class ObjectManager : MonoBehaviour
 {
     // Menu om objecten vanuit te plaatsen
     public GameObject UISideMenu;
+
+    // Switch van scene
+    public List <GameObject> scenesDeactivate;
+    public List <GameObject> scenesActivate;
+
     // Lijst met objecten die geplaatst kunnen worden die overeenkomen met de prefabs in de prefabs map
     public List<GameObject> prefabObjects;
 
@@ -32,6 +37,19 @@ public class ObjectManager : MonoBehaviour
     public void ShowMenu()
     {
         UISideMenu.SetActive(true);
+    }
+
+    public void TerugKnop()
+    {
+        foreach (GameObject obj in scenesDeactivate)
+        {
+            obj.SetActive(false);
+        }
+
+        foreach (GameObject obj in scenesActivate)
+        {
+            obj.SetActive(true);
+        }
     }
 
     // Methode om de huidige scène te resetten

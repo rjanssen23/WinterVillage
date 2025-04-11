@@ -91,7 +91,6 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
         VolgendeScene.SetActive(false);
-        Achtergrond.SetActive(true);
     }
 
     public void HoofdmenuSwitch()
@@ -111,7 +110,6 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielSelectieScherm.SetActive(false);
         ProfielAanmakenScherm.SetActive(false);
         VolgendeScene.SetActive(true);
-        Achtergrond.SetActive(false);
     }
 
     public void ProfielToevoegenScene()

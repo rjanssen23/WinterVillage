@@ -1,7 +1,7 @@
-using System;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
+using System;
 
 public class InlogRegistreerManager : MonoBehaviour
 {
@@ -13,11 +13,11 @@ public class InlogRegistreerManager : MonoBehaviour
     public GameObject Scene4;
 
     // Input fields for registration
-    public TMP_InputField registerEmailInputField;
+    public TMP_InputField registerUsernameInputField; // Changed from registerEmailInputField
     public TMP_InputField registerPasswordInputField;
 
     // Input fields for login
-    public TMP_InputField loginEmailInputField;
+    public TMP_InputField loginUsernameInputField; // Changed from loginEmailInputField
     public TMP_InputField loginPasswordInputField;
 
     public Button loginExit;
@@ -28,7 +28,7 @@ public class InlogRegistreerManager : MonoBehaviour
 
     public Button gaTerug;
     public Button gaDoorZonderAccount;
-    public Toggle showPasswordToggleInlog; // Toggle om het wachtwoord te verbergen of weer te geven
+    public Toggle showPasswordToggleInlog; // Toggle to show/hide password
     public Toggle showPasswordToggleRegister;
 
     // Buttons to switch between login and register screens
@@ -48,7 +48,7 @@ public class InlogRegistreerManager : MonoBehaviour
     public RawImage passwordWarningImage;
     public TextMeshProUGUI passwordWarningText;
 
-    // Api voor users
+    // Api for users
     public UserApiClient userApiClient;
 
     private bool isLoggedIn = false;
@@ -59,8 +59,8 @@ public class InlogRegistreerManager : MonoBehaviour
         loginButton.onClick.AddListener(Login);
         showPasswordToggleInlog.onValueChanged.AddListener(TogglePasswordVisibilityInlog);
         showPasswordToggleRegister.onValueChanged.AddListener(TogglePasswordVisibilityRegister);
-        loginPasswordInputField.contentType = TMP_InputField.ContentType.Password; // Standaard wachtwoord verbergen
-        registerPasswordInputField.contentType = TMP_InputField.ContentType.Password; // Standaard wachtwoord verbergen
+        loginPasswordInputField.contentType = TMP_InputField.ContentType.Password; // Hide password by default
+        registerPasswordInputField.contentType = TMP_InputField.ContentType.Password; // Hide password by default
 
         switchToLoginButton.onClick.AddListener(ShowLoginPanel);
         switchToRegisterButton.onClick.AddListener(ShowRegisterPanel);
@@ -92,7 +92,7 @@ public class InlogRegistreerManager : MonoBehaviour
     {
         User user = new User
         {
-            email = registerEmailInputField.text,
+            username = registerUsernameInputField.text, // Changed from email to username
             password = registerPasswordInputField.text
         };
 
@@ -121,7 +121,7 @@ public class InlogRegistreerManager : MonoBehaviour
     {
         User user = new User
         {
-            email = loginEmailInputField.text,
+            username = loginUsernameInputField.text, // Changed from email to username
             password = loginPasswordInputField.text
         };
 
@@ -171,8 +171,6 @@ public class InlogRegistreerManager : MonoBehaviour
         MainMenuButtons.SetActive(true);
     }
 
-
-
     private void HideRegisterPanel()
     {
         Debug.Log("Hiding register panel");
@@ -197,8 +195,6 @@ public class InlogRegistreerManager : MonoBehaviour
         Debug.Log("Proceeding without account");
         Scene1.SetActive(false);
         Scene4.SetActive(true);
-
-
     }
 
     private void ProceedWithAccount()
@@ -213,25 +209,23 @@ public class InlogRegistreerManager : MonoBehaviour
         if (isLoggedIn)
         {
             ProceedWithAccount();
-
         }
         else
         {
             ShowNotLoggedInWarning();
-
         }
     }
 
     private void TogglePasswordVisibilityInlog(bool isVisible)
     {
         loginPasswordInputField.contentType = isVisible ? TMP_InputField.ContentType.Standard : TMP_InputField.ContentType.Password;
-        loginPasswordInputField.ForceLabelUpdate(); // Forceer een update om de wijziging door te voeren
+        loginPasswordInputField.ForceLabelUpdate(); // Force update to apply the change
     }
 
     private void TogglePasswordVisibilityRegister(bool isVisible)
     {
         registerPasswordInputField.contentType = isVisible ? TMP_InputField.ContentType.Standard : TMP_InputField.ContentType.Password;
-        registerPasswordInputField.ForceLabelUpdate(); // Forceer een update om de wijziging door te voeren
+        registerPasswordInputField.ForceLabelUpdate(); // Force update to apply the change
     }
 
     private void ValidateRegisterPassword(string password)
@@ -247,6 +241,7 @@ public class InlogRegistreerManager : MonoBehaviour
             passwordWarningText.gameObject.SetActive(false);
         }
     }
+
     private void BootBackEvent()
     {
         if (isLoggedIn)
@@ -255,19 +250,16 @@ public class InlogRegistreerManager : MonoBehaviour
             Scene1.SetActive(true);
             Scene2ProfielSelecteren.SetActive(true);
             scene2ProfielToevoegen.SetActive(true);
-
         }
         else
         {
             NotLoggedInWarning.SetActive(false);
             Scene4.SetActive(false);
             Scene1.SetActive(true);
-
         }
-
-
     }
 }
+
 
 
 
