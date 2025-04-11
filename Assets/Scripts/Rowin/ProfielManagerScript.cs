@@ -50,7 +50,6 @@ public class ProfielManagerScript : MonoBehaviour
 
     public Button[] KindKnoppen;
 
-    public TMP_Dropdown dokterDropdown; // Assign this in Unity Inspector
 
     public ProfielkeuzeApiClient profielkeuzeApiClient; // Inject the API client
 
@@ -164,6 +163,8 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
         FetchProfiles(); // Refresh profiles after creating a new one
+        Debug.Log("MaakProfiel() function started!");
+
     }
 
     public void JongenGekozen()
