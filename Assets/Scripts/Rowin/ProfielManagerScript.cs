@@ -14,6 +14,8 @@ public class ProfielManagerScript : MonoBehaviour
     public GameObject ProfilePrison;
     public GameObject HoofdMenu;
 
+    public GameObject Achtergrond;
+
     //tijn
     public GameObject Scene1;
     public GameObject Scene2;
@@ -89,6 +91,7 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
         VolgendeScene.SetActive(false);
+        Achtergrond.SetActive(true);
     }
 
     public void HoofdmenuSwitch()
@@ -108,6 +111,7 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielSelectieScherm.SetActive(false);
         ProfielAanmakenScherm.SetActive(false);
         VolgendeScene.SetActive(true);
+        Achtergrond.SetActive(false);
     }
 
     public void ProfielToevoegenScene()
@@ -116,6 +120,7 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielAanmakenScherm.SetActive(true);
         MeisjeButtonObject.SetActive(true);
         JongenButtonObject.SetActive(true);
+
     }
 
     public void ProfielGeselecteerd()
