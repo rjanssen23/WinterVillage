@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9091590097672728533}
   - component: {fileID: -890541147947708589}
   m_Layer: 0
-  m_Name: House1
+  m_Name: House3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,7 +86,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 6.34, y: 5.95}
+    oldSize: {x: 5.72, y: 5.25}
     newSize: {x: 6.34, y: 5.95}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -138,7 +138,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 9096252500337797657, guid: fbc7216540a72394faeabcad4514f13f, type: 3}
+  m_Sprite: {fileID: 5139260608675251857, guid: 2a9acda12718c754c93807c9584e8229, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
