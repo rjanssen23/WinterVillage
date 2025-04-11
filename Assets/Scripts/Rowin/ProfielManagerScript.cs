@@ -14,25 +14,19 @@ public class ProfielManagerScript : MonoBehaviour
     public GameObject ProfilePrison;
     public GameObject HoofdMenu;
 
-    public GameObject Achtergrond;
-
-    //tijn
     public GameObject Scene1;
     public GameObject Scene2;
-    // 
 
     public int aantalProfielenAangemaakt = 0;
 
     public GameObject MeisjeButtonObject;
     public GameObject JongenButtonObject;
 
-    //tijn
     public GameObject LoginPanel;
     public GameObject MainMenuButtons;
-    //
 
-    public GameObject[] JongenObjecten; // Array voor de jongen objecten
-    public GameObject[] MeisjeObjecten; // Array voor de meisje objecten
+    public GameObject[] JongenObjecten;
+    public GameObject[] MeisjeObjecten;
     public Transform[] SpawnPosities;
 
     public TMP_InputField ProfielNaam;
@@ -50,13 +44,11 @@ public class ProfielManagerScript : MonoBehaviour
 
     public Button[] KindKnoppen;
 
-
-    public ProfielkeuzeApiClient profielkeuzeApiClient; // Inject the API client
+    public ProfielkeuzeApiClient profielkeuzeApiClient;
 
     private int spawnIndex = 0;
-    private bool isJongenGekozen = true; // Default to jongen
+    private bool isJongenGekozen = true;
 
-    // Add this property to store the selected profielkeuzeId
     public string SelectedProfielKeuzeId { get; private set; }
 
     void Start()
@@ -75,13 +67,11 @@ public class ProfielManagerScript : MonoBehaviour
         TerugNaarMenu.onClick.AddListener(HoofdmenuSwitch);
         BootBackButton.onClick.AddListener(BootBackNaarProfiel);
 
-
         foreach (Button knop in KindKnoppen)
         {
             knop.onClick.AddListener(ProfielGeselecteerd);
         }
 
-        // Fetch profiles when the script starts
         FetchProfiles();
     }
 
@@ -117,7 +107,6 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielAanmakenScherm.SetActive(true);
         MeisjeButtonObject.SetActive(true);
         JongenButtonObject.SetActive(true);
-
     }
 
     public void ProfielGeselecteerd()
@@ -131,28 +120,35 @@ public class ProfielManagerScript : MonoBehaviour
     {
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
-        FetchProfiles(); // Fetch profiles when navigating to profile selection
+        FetchProfiles();
     }
 
     public async void MaakProfiel()
     {
         Debug.Log("MaakProfiel() function started!");
 
-        // Check if important objects are null before proceeding
-
-        if (profielkeuzeApiClient == null) { Debug.LogError("profielkeuzeApiClient is NULL!"); return; }
+        if (ProfielNaam == null || string.IsNullOrWhiteSpace(ProfielNaam.text))
+        {
+            Debug.LogError("ProfielNaam is verplicht!");
+            return;
+        }
 
         ProfielKeuze newProfielKeuze = new ProfielKeuze
         {
-            name = ProfielNaam.text,
+            name = ProfielNaam.text
         };
+
+        if (profielkeuzeApiClient == null)
+        {
+            Debug.LogError("profielkeuzeApiClient is NULL!");
+            return;
+        }
 
         IWebRequestReponse webRequestResponse = await profielkeuzeApiClient.CreateProfielKeuze(newProfielKeuze);
 
         switch (webRequestResponse)
         {
             case WebRequestData<ProfielKeuze> dataResponse:
-                //Debug.Log("Profiel Aangemaakt: " + dataResponse.Data.id);
                 break;
             case WebRequestError errorResponse:
                 Debug.LogError("Create profielKeuze error: " + errorResponse.ErrorMessage);
@@ -160,11 +156,10 @@ public class ProfielManagerScript : MonoBehaviour
             default:
                 throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
         }
+
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
-        FetchProfiles(); // Refresh profiles after creating a new one
-        Debug.Log("MaakProfiel() function started!");
-
+        FetchProfiles();
     }
 
     public void JongenGekozen()
@@ -193,7 +188,7 @@ public class ProfielManagerScript : MonoBehaviour
     {
         GameObject[] gekozenObjecten = isJongenGekozen ? JongenObjecten : MeisjeObjecten;
 
-        if (aantalProfielenAangemaakt == 3)
+        if (aantalProfielenAangemaakt == 6)
         {
             Debug.LogWarning("Geen beschikbare objecten of spawnposities meer!");
             return;
@@ -258,19 +253,16 @@ public class ProfielManagerScript : MonoBehaviour
 
     private void DisplayProfiles(List<ProfielKeuze> profielKeuzes)
     {
-        // Clear existing profile buttons
         foreach (Transform child in ProfilePrison.transform)
         {
             Destroy(child.gameObject);
         }
 
-        // Reset the counter before adding new profiles
         aantalProfielenAangemaakt = 0;
 
-        // Create a button for each profile
         foreach (ProfielKeuze profiel in profielKeuzes)
         {
-            GameObject prefabToUse = profiel.avatar == "Jongen" ? JongenPrefab.gameObject : MeisjePrefab.gameObject;
+            GameObject prefabToUse = JongenPrefab.gameObject;
             Transform spawnPosition = SpawnPosities[aantalProfielenAangemaakt % SpawnPosities.Length];
             GameObject newButton = Instantiate(prefabToUse, spawnPosition.position, Quaternion.identity, ProfilePrison.transform);
 
@@ -301,46 +293,29 @@ public class ProfielManagerScript : MonoBehaviour
                     Debug.LogWarning("Text prefab has no TMP_Text component!");
                 }
             }
-            else
-            {
-                Debug.LogWarning("Text prefab is not assigned!");
-            }
 
             Button buttonComponent = newButton.GetComponent<Button>();
             if (buttonComponent != null)
             {
                 buttonComponent.onClick.AddListener(() => SelectProfile(profiel));
             }
-            else
-            {
-                Debug.LogWarning("Prefab has no Button component!");
-            }
 
-            // Increment the counter for each profile added
             aantalProfielenAangemaakt++;
-
-            // Display profile data in Unity UI elements
             DisplayProfileData(profiel);
         }
     }
 
     private void DisplayProfileData(ProfielKeuze profiel)
     {
-        // Example of displaying profile data in Unity UI elements
-        // You can customize this method to display the data as needed
-        Debug.Log($"EnvironmentName: {profiel.name}");
+        Debug.Log($"Name: {profiel.name}");
     }
 
     private string profielkeuzetoken;
     private void SelectProfile(ProfielKeuze profiel)
     {
         Debug.Log("Selected profile: " + profiel.name);
-        // Handle profile selection logic here
-        // Store the profielkeuzetoken
         profielkeuzetoken = profiel.id;
-        Debug.Log("Profielkeuze token: " + profielkeuzetoken);
-
-        // Store the selected profielkeuzeId
         SelectedProfielKeuzeId = profiel.id;
     }
 }
+
