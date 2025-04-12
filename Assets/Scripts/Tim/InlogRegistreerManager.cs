@@ -7,7 +7,7 @@ public class InlogRegistreerManager : MonoBehaviour
 {
     // scenes
     public GameObject Scene1;
-    public GameObject Scene2;
+    public GameObject[] Scene2;
     public GameObject Scene2ProfielSelecteren;
     public GameObject scene2ProfielToevoegen;
     public GameObject Scene4;
@@ -135,7 +135,10 @@ public class InlogRegistreerManager : MonoBehaviour
                 loginPanel.SetActive(false);
                 registerPanel.SetActive(false);
                 MainMenuButtons.SetActive(false);
-                Scene2ProfielSelecteren.SetActive(true);
+                foreach (GameObject scene in Scene2)
+                {
+                    scene.SetActive(true);
+                }
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;

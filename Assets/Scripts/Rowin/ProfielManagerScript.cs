@@ -14,22 +14,31 @@ public class ProfielManagerScript : MonoBehaviour
     public GameObject ProfilePrison;
     public GameObject HoofdMenu;
 
+    //tijn
     public GameObject Scene1;
     public GameObject Scene2;
+    // 
 
     public int aantalProfielenAangemaakt = 0;
 
     public GameObject MeisjeButtonObject;
     public GameObject JongenButtonObject;
 
+    //tijn
     public GameObject LoginPanel;
     public GameObject MainMenuButtons;
+    //
 
-    public GameObject[] JongenObjecten;
-    public GameObject[] MeisjeObjecten;
+    public GameObject[] JongenObjecten; // Array voor de jongen objecten
+    public GameObject[] MeisjeObjecten; // Array voor de meisje objecten
     public Transform[] SpawnPosities;
 
     public TMP_InputField ProfielNaam;
+    public TMP_InputField GeboorteDatumInput;
+
+    public TMP_Text Dokter1Text;
+    public TMP_Text Dokter2Text;
+    public TMP_Text Dokter3Text;
 
     public Button ProfielToevoegenButton;
     public Button NaarProfielSelectieButton;
@@ -44,11 +53,14 @@ public class ProfielManagerScript : MonoBehaviour
 
     public Button[] KindKnoppen;
 
-    public ProfielkeuzeApiClient profielkeuzeApiClient;
+    public TMP_Dropdown dokterDropdown; // Assign this in Unity Inspector
+
+    public ProfielkeuzeApiClient profielkeuzeApiClient; // Inject the API client
 
     private int spawnIndex = 0;
-    private bool isJongenGekozen = true;
+    private bool isJongenGekozen = true; // Default to jongen
 
+    // Add this property to store the selected profielkeuzeId
     public string SelectedProfielKeuzeId { get; private set; }
 
     void Start()
@@ -67,11 +79,19 @@ public class ProfielManagerScript : MonoBehaviour
         TerugNaarMenu.onClick.AddListener(HoofdmenuSwitch);
         BootBackButton.onClick.AddListener(BootBackNaarProfiel);
 
+        dokterDropdown.onValueChanged.AddListener(delegate { DropdownItemSelected(dokterDropdown); });
+
+        if (GeboorteDatumInput == null)
+        {
+            Debug.LogError("GeboorteDatumInput is NULL at Start! Make sure it's assigned in the Inspector.");
+        }
+
         foreach (Button knop in KindKnoppen)
         {
             knop.onClick.AddListener(ProfielGeselecteerd);
         }
 
+        // Fetch profiles when the script starts
         FetchProfiles();
     }
 
@@ -80,6 +100,20 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
         VolgendeScene.SetActive(false);
+    }
+
+    void DropdownItemSelected(TMP_Dropdown dropdown)
+    {
+        int selectedIndex = dropdown.value; // Get the selected index
+        string selectedText = dropdown.options[selectedIndex].text; // Get the selected text
+
+        Debug.Log("Selected: " + selectedText);
+
+        // Update the corresponding text field with the selected name
+        if (Dokter1Text != null)
+            Dokter1Text.text = selectedText;
+        Dokter2Text.text = selectedText;
+        Dokter3Text.text = selectedText;
     }
 
     public void HoofdmenuSwitch()
@@ -120,22 +154,32 @@ public class ProfielManagerScript : MonoBehaviour
     {
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
-        FetchProfiles();
+        FetchProfiles(); // Fetch profiles when navigating to profile selection
     }
 
     public async void MaakProfiel()
     {
         Debug.Log("MaakProfiel() function started!");
 
+        // Controleer of de profielnaam is ingevuld
         if (ProfielNaam == null || string.IsNullOrWhiteSpace(ProfielNaam.text))
         {
             Debug.LogError("ProfielNaam is verplicht!");
             return;
         }
 
+        // Gebruik standaardwaarden voor optionele velden
+        string geboorteDatum = GeboorteDatumInput != null ? GeboorteDatumInput.text : "";
+        string arts = (dokterDropdown != null && dokterDropdown.options != null && dokterDropdown.options.Count > 0)
+            ? dokterDropdown.options[dokterDropdown.value].text
+            : "";
+
         ProfielKeuze newProfielKeuze = new ProfielKeuze
         {
-            name = ProfielNaam.text
+            name = ProfielNaam.text,
+            geboorteDatum = geboorteDatum,
+            arts = arts,
+            avatar = isJongenGekozen ? "Jongen" : "Meisje",
         };
 
         if (profielkeuzeApiClient == null)
@@ -149,6 +193,7 @@ public class ProfielManagerScript : MonoBehaviour
         switch (webRequestResponse)
         {
             case WebRequestData<ProfielKeuze> dataResponse:
+                // Profiel succesvol aangemaakt
                 break;
             case WebRequestError errorResponse:
                 Debug.LogError("Create profielKeuze error: " + errorResponse.ErrorMessage);
@@ -159,8 +204,9 @@ public class ProfielManagerScript : MonoBehaviour
 
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
-        FetchProfiles();
+        FetchProfiles(); // Vernieuw de lijst met profielen
     }
+
 
     public void JongenGekozen()
     {
@@ -180,6 +226,7 @@ public class ProfielManagerScript : MonoBehaviour
 
     public void BootBackNaarProfiel()
     {
+        //tijn
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
     }
@@ -253,16 +300,19 @@ public class ProfielManagerScript : MonoBehaviour
 
     private void DisplayProfiles(List<ProfielKeuze> profielKeuzes)
     {
+        // Clear existing profile buttons
         foreach (Transform child in ProfilePrison.transform)
         {
             Destroy(child.gameObject);
         }
 
+        // Reset the counter before adding new profiles
         aantalProfielenAangemaakt = 0;
 
+        // Create a button for each profile
         foreach (ProfielKeuze profiel in profielKeuzes)
         {
-            GameObject prefabToUse = JongenPrefab.gameObject;
+            GameObject prefabToUse = profiel.avatar == "Jongen" ? JongenPrefab.gameObject : MeisjePrefab.gameObject;
             Transform spawnPosition = SpawnPosities[aantalProfielenAangemaakt % SpawnPosities.Length];
             GameObject newButton = Instantiate(prefabToUse, spawnPosition.position, Quaternion.identity, ProfilePrison.transform);
 
@@ -293,29 +343,48 @@ public class ProfielManagerScript : MonoBehaviour
                     Debug.LogWarning("Text prefab has no TMP_Text component!");
                 }
             }
+            else
+            {
+                Debug.LogWarning("Text prefab is not assigned!");
+            }
 
             Button buttonComponent = newButton.GetComponent<Button>();
             if (buttonComponent != null)
             {
                 buttonComponent.onClick.AddListener(() => SelectProfile(profiel));
             }
+            else
+            {
+                Debug.LogWarning("Prefab has no Button component!");
+            }
 
+            // Increment the counter for each profile added
             aantalProfielenAangemaakt++;
+
+            // Display profile data in Unity UI elements
             DisplayProfileData(profiel);
         }
     }
 
     private void DisplayProfileData(ProfielKeuze profiel)
     {
-        Debug.Log($"Name: {profiel.name}");
+        // Example of displaying profile data in Unity UI elements
+        // You can customize this method to display the data as needed
+        Debug.Log($"Name: {profiel.name}, Arts: {profiel.arts}, GeboorteDatum: {profiel.geboorteDatum}, Avatar: {profiel.avatar}");
     }
 
     private string profielkeuzetoken;
     private void SelectProfile(ProfielKeuze profiel)
     {
         Debug.Log("Selected profile: " + profiel.name);
+        // Handle profile selection logic here
+        // Store the profielkeuzetoken
         profielkeuzetoken = profiel.id;
+        Debug.Log("Profielkeuze token: " + profielkeuzetoken);
+
+        // Store the selected profielkeuzeId
         SelectedProfielKeuzeId = profiel.id;
     }
 }
+
 

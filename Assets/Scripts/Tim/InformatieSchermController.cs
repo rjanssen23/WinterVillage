@@ -4,7 +4,10 @@ using UnityEngine.UI;
 public class InformatieSchermController : MonoBehaviour
 {
     // alle scenes
+    
     public GameObject scene2;
+
+
     public GameObject scene3; 
     public GameObject scene4;
 
@@ -43,6 +46,7 @@ public class InformatieSchermController : MonoBehaviour
 
     void ToInfoScreen()
     {
+
         scene2.SetActive(false);
         scene3.SetActive(true);
         scene4.SetActive(false);
@@ -50,6 +54,8 @@ public class InformatieSchermController : MonoBehaviour
 
     void ToWorldMap()
     {
+
+        
         scene2.SetActive(false);
         scene3.SetActive(false);
         scene4.SetActive(true);
