@@ -11,6 +11,8 @@ public class InlogRegistreerManager : MonoBehaviour
     public GameObject Scene2ProfielSelecteren;
     public GameObject scene2ProfielToevoegen;
     public GameObject Scene4;
+    public GameObject registratieNietCorrect;
+    public GameObject loginNietCorrect;
 
     // Input fields for registration
     public TMP_InputField registerEmailInputField;
@@ -104,11 +106,13 @@ public class InlogRegistreerManager : MonoBehaviour
                 PlayerPrefs.SetString("authToken", token); // Save the token
                 PlayerPrefs.Save();
                 isLoggedIn = true;
+                registratieNietCorrect.SetActive(false);
                 ProceedWithAccount();
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
                 Debug.Log("Register error: " + errorMessage);
+                registratieNietCorrect.SetActive(true);
                 break;
             default:
                 throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
@@ -135,6 +139,7 @@ public class InlogRegistreerManager : MonoBehaviour
                 loginPanel.SetActive(false);
                 registerPanel.SetActive(false);
                 MainMenuButtons.SetActive(false);
+                loginNietCorrect.SetActive(false);
                 foreach (GameObject scene in Scene2)
                 {
                     scene.SetActive(true);
@@ -143,6 +148,7 @@ public class InlogRegistreerManager : MonoBehaviour
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
                 Debug.Log("Login error: " + errorMessage);
+                loginNietCorrect.SetActive(true);
                 break;
             default:
                 throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
@@ -237,7 +243,7 @@ public class InlogRegistreerManager : MonoBehaviour
 
     private void ValidateRegisterPassword(string password)
     {
-        if (password.Length < 1 || password.Length > 16)
+        if (password.Length < 10 || password.Length > 16)
         {
             passwordWarningImage.gameObject.SetActive(true);
             passwordWarningText.gameObject.SetActive(true);

@@ -13,7 +13,7 @@ public class ProfielManagerScript : MonoBehaviour
     public GameObject textPrefab;
     public GameObject ProfilePrison;
     public GameObject HoofdMenu;
-
+    public GameObject environmentNietGoed;
     //tijn
     public GameObject Scene1;
     public GameObject Scene2;
@@ -59,6 +59,7 @@ public class ProfielManagerScript : MonoBehaviour
 
     private int spawnIndex = 0;
     private bool isJongenGekozen = true; // Default to jongen
+    private bool verkeerdeNaam = true;
 
     // Add this property to store the selected profielkeuzeId
     public string SelectedProfielKeuzeId { get; private set; }
@@ -78,6 +79,8 @@ public class ProfielManagerScript : MonoBehaviour
         JongenPrefab.onClick.AddListener(VolgendeSceneSwitch);
         TerugNaarMenu.onClick.AddListener(HoofdmenuSwitch);
         BootBackButton.onClick.AddListener(BootBackNaarProfiel);
+
+        
 
         dokterDropdown.onValueChanged.AddListener(delegate { DropdownItemSelected(dokterDropdown); });
 
@@ -154,6 +157,7 @@ public class ProfielManagerScript : MonoBehaviour
     {
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
+        environmentNietGoed.SetActive(false);
         FetchProfiles(); // Fetch profiles when navigating to profile selection
     }
 
@@ -165,6 +169,14 @@ public class ProfielManagerScript : MonoBehaviour
         if (ProfielNaam == null || string.IsNullOrWhiteSpace(ProfielNaam.text))
         {
             Debug.LogError("ProfielNaam is verplicht!");
+            return;
+        }
+
+        // Controleer of de profielnaam tussen 1 en 25 tekens zit
+        if (ProfielNaam.text.Length < 1 || ProfielNaam.text.Length > 25)
+        {
+            Debug.LogError("De profielnaam moet tussen de 1 en 25 tekens zijn.");
+            environmentNietGoed.SetActive(true);
             return;
         }
 
@@ -202,37 +214,13 @@ public class ProfielManagerScript : MonoBehaviour
                 throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
         }
 
+        environmentNietGoed.SetActive(false);
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
+
         FetchProfiles(); // Vernieuw de lijst met profielen
     }
 
-    public async void VerwijderProfiel(string profielId)
-    {
-        Debug.Log("Verwijderen van profiel met ID: " + profielId);
-
-        if (profielkeuzeApiClient == null)
-        {
-            Debug.LogError("profielkeuzeApiClient is NULL!");
-            return;
-        }
-
-        IWebRequestReponse response = await profielkeuzeApiClient.DeleteProfielKeuze(profielId);
-
-        switch (response)
-        {
-            case WebRequestSuccess:
-                Debug.Log("Profiel succesvol verwijderd.");
-                FetchProfiles(); // herlaad de profielen
-                break;
-            case WebRequestError error:
-                Debug.LogError("Fout bij verwijderen profiel: " + error.ErrorMessage);
-                break;
-            default:
-                Debug.LogError("Onbekende respons bij verwijderen profiel.");
-                break;
-        }
-    }
 
 
     public void JongenGekozen()
@@ -391,25 +379,6 @@ public class ProfielManagerScript : MonoBehaviour
             // Display profile data in Unity UI elements
             DisplayProfileData(profiel);
 
-            // Voeg een verwijderknop toe aan elk profiel
-            GameObject verwijderKnopObject = new GameObject("VerwijderKnop");
-            verwijderKnopObject.transform.SetParent(newButton.transform, false);
-            Button verwijderKnop = verwijderKnopObject.AddComponent<Button>();
-
-            // Positie en styling (pas aan naar wens)
-            RectTransform rectTransform = verwijderKnopObject.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(40, 40);
-            rectTransform.anchoredPosition = new Vector2(60, 60); // rechtsboven bij het profiel
-
-            // Voeg visueel element toe (bijv. X of icoontje)
-            TextMeshProUGUI knopText = verwijderKnopObject.AddComponent<TextMeshProUGUI>();
-            knopText.text = "X"; // of gebruik een sprite
-            knopText.fontSize = 36;
-            knopText.color = Color.red;
-            knopText.alignment = TextAlignmentOptions.Center;
-
-            string profielIdToDelete = profiel.id;
-            verwijderKnop.onClick.AddListener(() => VerwijderProfiel(profielIdToDelete));
 
         }
     }
