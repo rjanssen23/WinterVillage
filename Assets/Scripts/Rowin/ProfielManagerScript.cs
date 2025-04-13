@@ -227,7 +227,7 @@ public class ProfielManagerScript : MonoBehaviour
     {
         GameObject[] gekozenObjecten = isJongenGekozen ? JongenObjecten : MeisjeObjecten;
 
-        if (aantalProfielenAangemaakt == 6)
+        if (aantalProfielenAangemaakt == 3)
         {
             Debug.LogWarning("Geen beschikbare objecten of spawnposities meer!");
             return;
