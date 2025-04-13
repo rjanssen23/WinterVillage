@@ -30,9 +30,8 @@ public class ProfielManagerScript : MonoBehaviour
     public GameObject[] MeisjeObjecten;
     public Transform[] SpawnPosities;
 
-    public Transform[] environments; // Sleep hier je spawnpunten in
-    private int environmentIndex = 0;
-
+    public Transform[] environments; // Array of spawn positions
+    private int currentIndex = 0; // Keeps track of which environment to use next
 
     public TMP_InputField ProfielNaam;
     public TMP_InputField GeboorteDatumInput;
@@ -228,7 +227,6 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielAanmakenScherm.SetActive(false);
     }
 
-
     public void SpawnObject()
     {
         GameObject[] gekozenObjecten = isJongenGekozen ? JongenObjecten : MeisjeObjecten;
@@ -239,16 +237,13 @@ public class ProfielManagerScript : MonoBehaviour
             return;
         }
 
-        // Spawn bij de huidige environment positie
-        Transform spawnPoint = environments[environmentIndex];
-        GameObject newObject = Instantiate(gekozenObjecten[spawnIndex], spawnPoint.position, Quaternion.identity);
-
+        GameObject newObject = Instantiate(gekozenObjecten[spawnIndex], SpawnPosities[spawnIndex].position, Quaternion.identity);
         if (ProfilePrison != null)
             newObject.transform.SetParent(ProfilePrison.transform, false);
 
         if (textPrefab != null)
         {
-            GameObject newText = Instantiate(textPrefab, spawnPoint.position, Quaternion.identity);
+            GameObject newText = Instantiate(textPrefab, SpawnPosities[spawnIndex].position, Quaternion.identity);
             newText.transform.SetParent(newObject.transform, false);
 
             TMP_Text textComponent = newText.GetComponent<TMP_Text>();
@@ -260,12 +255,9 @@ public class ProfielManagerScript : MonoBehaviour
             }
         }
 
-        // Volgende indices bijhouden
         spawnIndex = (spawnIndex + 1) % gekozenObjecten.Length;
-        environmentIndex = (environmentIndex + 1) % environments.Length;
         aantalProfielenAangemaakt++;
     }
-
 
     public async void FetchProfiles()
     {
@@ -366,25 +358,6 @@ public class ProfielManagerScript : MonoBehaviour
         Debug.Log("Selected profile: " + profiel.name);
         Debug.Log("Profielkeuze token: " + profielkeuzetoken);
     }
-
-    public void SpawnAtEnvironment(GameObject objectToSpawn)
-    {
-        // Kies welk object moet worden gespawnd (Jongen of Meisje)
-        GameObject[] gekozenObjecten = isJongenGekozen ? JongenObjecten : MeisjeObjecten;
-
-        if (environments.Length == 0 || objectToSpawn == null)
-        {
-            Debug.LogWarning("Missing environment points or object to spawn.");
-            return;
-        }
-
-        // Spawn at current environment position and rotation
-        Instantiate(gekozenObjecten[spawnIndex], environments[environmentIndex].position, environments[environmentIndex].rotation);
-
-        // Volgende environment gebruiken
-        environmentIndex = (environmentIndex + 1) % environments.Length;
-    }
-
 }
 
 
