@@ -8,6 +8,8 @@ public class ObjectManager : MonoBehaviour
     // Menu om objecten vanuit te plaatsen
     public GameObject UISideMenu;
 
+    public Transform parentVoorNieuweObjecten; // Sleep hier het gewenste object in de Inspector
+
     // Switch van scene
     public List <GameObject> scenesDeactivate;
     public List <GameObject> scenesActivate;

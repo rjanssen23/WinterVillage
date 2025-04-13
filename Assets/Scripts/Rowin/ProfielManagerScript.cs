@@ -383,6 +383,36 @@ public class ProfielManagerScript : MonoBehaviour
         }
     }
 
+    public async void VerwijderGeselecteerdProfiel()
+    {
+        if (string.IsNullOrEmpty(SelectedProfielKeuzeId))
+        {
+            Debug.LogWarning("Geen profiel geselecteerd om te verwijderen.");
+            return;
+        }
+
+        Debug.Log("Verwijderen profiel met ID: " + SelectedProfielKeuzeId);
+
+        IWebRequestReponse response = await profielkeuzeApiClient.DeleteProfielKeuze(SelectedProfielKeuzeId);
+
+        switch (response)
+        {
+            case WebRequestData<object> _: // Of een ander type als je Delete een specifieke data teruggeeft
+                Debug.Log("Profiel succesvol verwijderd.");
+                SelectedProfielKeuzeId = null;
+                FetchProfiles();
+                break;
+
+            case WebRequestError error:
+                Debug.LogError("Fout bij verwijderen profiel: " + error.ErrorMessage);
+                break;
+
+            default:
+                Debug.LogError("Onbekend antwoord bij verwijderen profiel.");
+                break;
+        }
+    }
+
     private void DisplayProfileData(ProfielKeuze profiel)
     {
         // Example of displaying profile data in Unity UI elements
