@@ -36,9 +36,9 @@ public class ProfielManagerScript : MonoBehaviour
     public TMP_InputField ProfielNaam;
     public TMP_InputField GeboorteDatumInput;
 
-    public TMP_Text Dokter1Text;
-    public TMP_Text Dokter2Text;
-    public TMP_Text Dokter3Text;
+    public TMP_Text Wereld1Text;
+    public TMP_Text Wereld2Text;
+    public TMP_Text Wereld3Text;
 
     public Button ProfielToevoegenButton;
     public Button NaarProfielSelectieButton;
@@ -54,7 +54,7 @@ public class ProfielManagerScript : MonoBehaviour
     public Button[] KindKnoppen;
 
 
-    public TMP_Dropdown dokterDropdown;
+    public TMP_Dropdown wereldDropdown;
 
     public ProfielkeuzeApiClient profielkeuzeApiClient;
 
@@ -81,7 +81,7 @@ public class ProfielManagerScript : MonoBehaviour
         JongenPrefab.onClick.AddListener(VolgendeSceneSwitch);
         TerugNaarMenu.onClick.AddListener(HoofdmenuSwitch);
         BootBackButton.onClick.AddListener(BootBackNaarProfiel);
-        dokterDropdown.onValueChanged.AddListener(delegate { DropdownItemSelected(dokterDropdown); });
+        wereldDropdown.onValueChanged.AddListener(delegate { DropdownItemSelected(wereldDropdown); });
 
         if (GeboorteDatumInput == null)
             Debug.LogError("GeboorteDatumInput is NULL at Start!");
@@ -106,10 +106,10 @@ public class ProfielManagerScript : MonoBehaviour
         int selectedIndex = dropdown.value;
         string selectedText = dropdown.options[selectedIndex].text;
 
-        if (Dokter1Text != null)
-            Dokter1Text.text = selectedText;
-        Dokter2Text.text = selectedText;
-        Dokter3Text.text = selectedText;
+        if (Wereld1Text != null)
+            Wereld2Text.text = selectedText;
+        Wereld2Text.text = selectedText;
+        Wereld3Text.text = selectedText;
     }
 
     public void HoofdmenuSwitch()
@@ -170,8 +170,8 @@ public class ProfielManagerScript : MonoBehaviour
         }
 
         string geboorteDatum = GeboorteDatumInput != null ? GeboorteDatumInput.text : "";
-        string arts = (dokterDropdown != null && dokterDropdown.options.Count > 0)
-            ? dokterDropdown.options[dokterDropdown.value].text
+        string arts = (wereldDropdown != null && wereldDropdown.options.Count > 0)
+            ? wereldDropdown.options[wereldDropdown.value].text
             : "";
 
         ProfielKeuze newProfielKeuze = new ProfielKeuze
