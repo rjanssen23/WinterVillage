@@ -20,18 +20,19 @@ public class ProfielManagerScript : MonoBehaviour
 
     public int aantalProfielenAangemaakt = 0;
 
-    public GameObject MeisjeButtonObject;
-    public GameObject JongenButtonObject;
+    // Vervang Meisje- en Jongen-objecten door profile2 en profile1
+    public GameObject Profile2ButtonObject;
+    public GameObject Profile1ButtonObject;
 
     public GameObject LoginPanel;
     public GameObject MainMenuButtons;
 
-    public GameObject[] JongenObjecten;
-    public GameObject[] MeisjeObjecten;
+    public GameObject[] Profile1Objecten;
+    public GameObject[] Profile2Objecten;
     public Transform[] SpawnPosities;
 
-    public Transform[] environments; // Array of spawn positions
-    private int currentIndex = 0; // Keeps track of which environment to use next
+    public Transform[] environments;
+    private int currentIndex = 0;
 
     public TMP_InputField ProfielNaam;
     public TMP_InputField GeboorteDatumInput;
@@ -43,23 +44,23 @@ public class ProfielManagerScript : MonoBehaviour
     public Button ProfielToevoegenButton;
     public Button NaarProfielSelectieButton;
     public Button MaakProfielButton;
-    public Button JongenButton;
-    public Button MeisjeButton;
+    public Button Profile1Button;    // eerder JongenButton
+    public Button Profile2Button;    // eerder MeisjeButton
     public Button VolgendeSceneButton;
-    public Button MeisjePrefab;
-    public Button JongenPrefab;
+    public Button Profile2Prefab;    // eerder MeisjePrefab
+    public Button Profile1Prefab;    // eerder JongenPrefab
     public Button TerugNaarMenu;
     public Button BootBackButton;
 
     public Button[] KindKnoppen;
-
 
     public TMP_Dropdown wereldDropdown;
 
     public ProfielkeuzeApiClient profielkeuzeApiClient;
 
     private int spawnIndex = 0;
-    private bool isJongenGekozen = true;
+    // isProfile1Gekozen vervangt isJongenGekozen
+    private bool isProfile1Gekozen = true;
     private bool verkeerdeNaam = true;
 
     public string SelectedProfielKeuzeId { get; private set; }
@@ -70,15 +71,16 @@ public class ProfielManagerScript : MonoBehaviour
     {
         Reset();
         FetchProfiles();
+
         ProfielToevoegenButton.onClick.AddListener(ProfielToevoegenScene);
         NaarProfielSelectieButton.onClick.AddListener(NaarProfielSelectie);
         MaakProfielButton.onClick.AddListener(MaakProfiel);
-        JongenButton.onClick.AddListener(JongenGekozen);
-        MeisjeButton.onClick.AddListener(MeisjeGekozen);
+        Profile1Button.onClick.AddListener(Profile1Gekozen);
+        Profile2Button.onClick.AddListener(Profile2Gekozen);
         MaakProfielButton.onClick.AddListener(SpawnObject);
         VolgendeSceneButton.onClick.AddListener(VolgendeSceneSwitch);
-        MeisjePrefab.onClick.AddListener(VolgendeSceneSwitch);
-        JongenPrefab.onClick.AddListener(VolgendeSceneSwitch);
+        Profile2Prefab.onClick.AddListener(VolgendeSceneSwitch);
+        Profile1Prefab.onClick.AddListener(VolgendeSceneSwitch);
         TerugNaarMenu.onClick.AddListener(HoofdmenuSwitch);
         BootBackButton.onClick.AddListener(BootBackNaarProfiel);
         wereldDropdown.onValueChanged.AddListener(delegate { DropdownItemSelected(wereldDropdown); });
@@ -135,8 +137,8 @@ public class ProfielManagerScript : MonoBehaviour
     {
         ProfielSelectieScherm.SetActive(false);
         ProfielAanmakenScherm.SetActive(true);
-        MeisjeButtonObject.SetActive(true);
-        JongenButtonObject.SetActive(true);
+        Profile2ButtonObject.SetActive(true);
+        Profile1ButtonObject.SetActive(true);
     }
 
     public void ProfielGeselecteerd()
@@ -174,12 +176,13 @@ public class ProfielManagerScript : MonoBehaviour
             ? wereldDropdown.options[wereldDropdown.value].text
             : "";
 
+        // Sla als avatar op: "profile1" of "profile2"
         ProfielKeuze newProfielKeuze = new ProfielKeuze
         {
             name = ProfielNaam.text,
             geboorteDatum = geboorteDatum,
             arts = arts,
-            avatar = isJongenGekozen ? "Jongen" : "Meisje",
+            avatar = isProfile1Gekozen ? "profile1" : "profile2",
         };
 
         if (profielkeuzeApiClient == null)
@@ -207,18 +210,20 @@ public class ProfielManagerScript : MonoBehaviour
         FetchProfiles();
     }
 
-    public void JongenGekozen()
+    // Methode voor profile1 (voorheen Jongen)
+    public void Profile1Gekozen()
     {
-        isJongenGekozen = true;
-        MeisjeButtonObject.SetActive(false);
-        JongenButtonObject.SetActive(true);
+        isProfile1Gekozen = true;
+        Profile2ButtonObject.SetActive(false);
+        Profile1ButtonObject.SetActive(true);
     }
 
-    public void MeisjeGekozen()
+    // Methode voor profile2 (voorheen Meisje)
+    public void Profile2Gekozen()
     {
-        isJongenGekozen = false;
-        JongenButtonObject.SetActive(false);
-        MeisjeButtonObject.SetActive(true);
+        isProfile1Gekozen = false;
+        Profile1ButtonObject.SetActive(false);
+        Profile2ButtonObject.SetActive(true);
     }
 
     public void BootBackNaarProfiel()
@@ -229,7 +234,8 @@ public class ProfielManagerScript : MonoBehaviour
 
     public void SpawnObject()
     {
-        GameObject[] gekozenObjecten = isJongenGekozen ? JongenObjecten : MeisjeObjecten;
+        // Gebruik de juiste objecten op basis van de keuze
+        GameObject[] gekozenObjecten = isProfile1Gekozen ? Profile1Objecten : Profile2Objecten;
 
         if (aantalProfielenAangemaakt == 3)
         {
@@ -249,7 +255,7 @@ public class ProfielManagerScript : MonoBehaviour
             TMP_Text textComponent = newText.GetComponent<TMP_Text>();
             if (textComponent != null)
             {
-                textComponent.text = ProfielNaam.text;
+                textComponent.text = isProfile1Gekozen ? "profile1" : "profile2";
                 newText.transform.localPosition = new Vector3(0, -73, 0);
                 textComponent.fontSize = 50;
             }
@@ -287,13 +293,14 @@ public class ProfielManagerScript : MonoBehaviour
 
         foreach (ProfielKeuze profiel in profielKeuzes)
         {
-            GameObject prefabToUse = profiel.avatar == "Jongen" ? JongenPrefab.gameObject : MeisjePrefab.gameObject;
+            // Kies het juiste prefab op basis van de avatar-waarde ("profile1" of "profile2")
+            GameObject prefabToUse = profiel.avatar == "profile1" ? Profile1Prefab.gameObject : Profile2Prefab.gameObject;
             Transform spawnPosition = SpawnPosities[aantalProfielenAangemaakt % SpawnPosities.Length];
             GameObject newButton = Instantiate(prefabToUse, spawnPosition.position, Quaternion.identity, ProfilePrison.transform);
 
             TMP_Text textComponent = newButton.GetComponentInChildren<TMP_Text>();
             if (textComponent != null)
-                textComponent.text = profiel.name;
+                textComponent.text = profiel.avatar == "profile1" ? "profile1" : "profile2";
 
             if (textPrefab != null)
             {
@@ -303,7 +310,7 @@ public class ProfielManagerScript : MonoBehaviour
                 TMP_Text textPrefabComponent = newText.GetComponent<TMP_Text>();
                 if (textPrefabComponent != null)
                 {
-                    textPrefabComponent.text = profiel.name;
+                    textPrefabComponent.text = profiel.avatar == "profile1" ? "profile1" : "profile2";
                     newText.transform.localPosition = new Vector3(0, -73, 0);
                     textPrefabComponent.fontSize = 50;
                 }
@@ -348,17 +355,16 @@ public class ProfielManagerScript : MonoBehaviour
 
     private void DisplayProfileData(ProfielKeuze profiel)
     {
-        Debug.Log($"Name: {profiel.name}, Arts: {profiel.arts}, GeboorteDatum: {profiel.geboorteDatum}, Avatar: {profiel.avatar}");
+        string displayName = profiel.avatar == "profile1" ? "profile1" : "profile2";
+        Debug.Log($"Name: {displayName}, Arts: {profiel.arts}, GeboorteDatum: {profiel.geboorteDatum}, Avatar: {profiel.avatar}");
     }
 
     private void SelectProfile(ProfielKeuze profiel)
     {
         profielkeuzetoken = profiel.id;
         SelectedProfielKeuzeId = profiel.id;
-        Debug.Log("Selected profile: " + profiel.name);
+        Debug.Log("Selected profile: " + (profiel.avatar == "profile1" ? "profile1" : "profile2"));
         Debug.Log("Profielkeuze token: " + profielkeuzetoken);
     }
 }
-
-
 
