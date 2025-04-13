@@ -78,7 +78,7 @@ public class ProfielkeuzeApiClient : MonoBehaviour
             List<ProfielKeuze> profielKeuzes = profielKeuzesData.Data;
             foreach (var profielKeuze in profielKeuzes)
             {
-                // Log alleen name en avatar, aangezien arts en geboortedatum niet langer nodig zijn.
+                // Alleen name en avatar worden gelogd.
                 Debug.Log($"Name: {profielKeuze.name}, Avatar: {profielKeuze.avatar}");
             }
         }
@@ -92,6 +92,7 @@ public class ProfielkeuzeApiClient : MonoBehaviour
         }
     }
 }
+
 
 
 

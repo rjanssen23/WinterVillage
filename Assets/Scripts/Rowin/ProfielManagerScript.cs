@@ -31,11 +31,6 @@ public class ProfielManagerScript : MonoBehaviour
     public Transform[] SpawnPosities;
 
     public TMP_InputField ProfielNaam;
-    public TMP_InputField GeboorteDatumInput;
-
-    public TMP_Text Dokter1Text;
-    public TMP_Text Dokter2Text;
-    public TMP_Text Dokter3Text;
 
     public Button ProfielToevoegenButton;
     public Button NaarProfielSelectieButton;
@@ -50,13 +45,10 @@ public class ProfielManagerScript : MonoBehaviour
 
     public Button[] KindKnoppen;
 
-    public TMP_Dropdown dokterDropdown;
-
     public ProfielkeuzeApiClient profielkeuzeApiClient;
 
     private int spawnIndex = 0;
     private bool isJongenGekozen = true;
-    private bool verkeerdeNaam = true;
 
     public string SelectedProfielKeuzeId { get; private set; }
 
@@ -77,10 +69,6 @@ public class ProfielManagerScript : MonoBehaviour
         JongenPrefab.onClick.AddListener(VolgendeSceneSwitch);
         TerugNaarMenu.onClick.AddListener(HoofdmenuSwitch);
         BootBackButton.onClick.AddListener(BootBackNaarProfiel);
-        dokterDropdown.onValueChanged.AddListener(delegate { DropdownItemSelected(dokterDropdown); });
-
-        if (GeboorteDatumInput == null)
-            Debug.LogError("GeboorteDatumInput is NULL at Start!");
 
         foreach (Button knop in KindKnoppen)
         {
@@ -95,17 +83,6 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielSelectieScherm.SetActive(true);
         ProfielAanmakenScherm.SetActive(false);
         VolgendeScene.SetActive(false);
-    }
-
-    void DropdownItemSelected(TMP_Dropdown dropdown)
-    {
-        int selectedIndex = dropdown.value;
-        string selectedText = dropdown.options[selectedIndex].text;
-
-        if (Dokter1Text != null)
-            Dokter1Text.text = selectedText;
-        Dokter2Text.text = selectedText;
-        Dokter3Text.text = selectedText;
     }
 
     public void HoofdmenuSwitch()
@@ -165,16 +142,9 @@ public class ProfielManagerScript : MonoBehaviour
             return;
         }
 
-        string geboorteDatum = GeboorteDatumInput != null ? GeboorteDatumInput.text : "";
-        string arts = (dokterDropdown != null && dokterDropdown.options.Count > 0)
-            ? dokterDropdown.options[dokterDropdown.value].text
-            : "";
-
         ProfielKeuze newProfielKeuze = new ProfielKeuze
         {
             name = ProfielNaam.text,
-            geboorteDatum = geboorteDatum,
-            arts = arts,
             avatar = isJongenGekozen ? "Jongen" : "Meisje",
         };
 
@@ -227,7 +197,7 @@ public class ProfielManagerScript : MonoBehaviour
     {
         GameObject[] gekozenObjecten = isJongenGekozen ? JongenObjecten : MeisjeObjecten;
 
-        if (aantalProfielenAangemaakt == 6)
+        if (aantalProfielenAangemaakt == 3)
         {
             Debug.LogWarning("Geen beschikbare objecten of spawnposities meer!");
             return;
@@ -312,7 +282,7 @@ public class ProfielManagerScript : MonoBehaviour
             }
 
             aantalProfielenAangemaakt++;
-            DisplayProfileData(profiel);
+            Debug.Log($"Name: {profiel.name}, Avatar: {profiel.avatar}");
         }
     }
 
@@ -340,11 +310,6 @@ public class ProfielManagerScript : MonoBehaviour
                 Debug.LogError("Onbekend antwoord bij verwijderen profiel.");
                 break;
         }
-    }
-
-    private void DisplayProfileData(ProfielKeuze profiel)
-    {
-        Debug.Log($"Name: {profiel.name}, Arts: {profiel.arts}, GeboorteDatum: {profiel.geboorteDatum}, Avatar: {profiel.avatar}");
     }
 
     private void SelectProfile(ProfielKeuze profiel)
