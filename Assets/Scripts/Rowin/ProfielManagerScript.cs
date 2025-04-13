@@ -173,8 +173,6 @@ public class ProfielManagerScript : MonoBehaviour
         ProfielKeuze newProfielKeuze = new ProfielKeuze
         {
             name = ProfielNaam.text,
-            geboorteDatum = geboorteDatum,
-            arts = arts,
             avatar = isJongenGekozen ? "Jongen" : "Meisje",
         };
 
@@ -344,7 +342,7 @@ public class ProfielManagerScript : MonoBehaviour
 
     private void DisplayProfileData(ProfielKeuze profiel)
     {
-        Debug.Log($"Name: {profiel.name}, Arts: {profiel.arts}, GeboorteDatum: {profiel.geboorteDatum}, Avatar: {profiel.avatar}");
+        Debug.Log($"Name: {profiel.name}");
     }
 
     private void SelectProfile(ProfielKeuze profiel)
