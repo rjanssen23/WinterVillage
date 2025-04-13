@@ -56,8 +56,8 @@ public class ObjectManager : MonoBehaviour
 
     // Methode om de huidige scène te resetten
     public void Reset()
-    {
-        // Laad de huidige scène opnieuw
+    { 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
     }
 }
