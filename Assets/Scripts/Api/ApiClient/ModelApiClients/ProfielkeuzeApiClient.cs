@@ -79,7 +79,7 @@ public class ProfielkeuzeApiClient : MonoBehaviour
             foreach (var profielKeuze in profielKeuzes)
             {
                 // Log alleen name en avatar, aangezien arts en geboortedatum niet langer nodig zijn.
-                Debug.Log($"Name: {profielKeuze.name}, Avatar: {profielKeuze.avatar}");
+                Debug.Log($"Name: {profielKeuze.name}");
             }
         }
         else if (response is WebRequestError error)
