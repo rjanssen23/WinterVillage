@@ -13,10 +13,10 @@ public class LeeftijdValidator : MonoBehaviour
         if (int.TryParse(leeftijdInput.text, out int leeftijd))
         {
             // Controleer of de leeftijd binnen de geldige grenzen valt
-            if (leeftijd < 4 || leeftijd > 12)
+            if (leeftijd < 0 || leeftijd > 80)
             {
-                foutmelding.text = "Leeftijd moet tussen 4 en 12 jaar zijn!";
-                Debug.LogError("Leeftijd moet tussen 4 en 12 jaar zijn!");
+                foutmelding.text = "Leeftijd moet tussen 0 en 80 jaar zijn!";
+                Debug.LogError("Leeftijd moet tussen 0 en 80 jaar zijn!");
                 return;
             }
 
