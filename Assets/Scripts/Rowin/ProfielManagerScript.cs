@@ -182,7 +182,7 @@ namespace ProfielManagerScript
             ProfielKeuze newProfielKeuze = new ProfielKeuze
             {
                 name = ProfielNaam.text,
-                avatar = isJongenGekozen ? "Jongen" : "Meisje",
+               // avatar = isJongenGekozen ? "Jongen" : "Meisje",
             };
 
             if (profielkeuzeApiClient == null)
@@ -298,39 +298,39 @@ namespace ProfielManagerScript
 
             aantalProfielenAangemaakt = 0;
 
-            foreach (ProfielKeuze profiel in profielKeuzes)
-            {
-                GameObject prefabToUse = profiel.avatar == "Jongen" ? JongenPrefab.gameObject : MeisjePrefab.gameObject;
-                Transform spawnPosition = SpawnPosities[aantalProfielenAangemaakt % SpawnPosities.Length];
-                GameObject newButton = Instantiate(prefabToUse, spawnPosition.position, Quaternion.identity, ProfilePrison.transform);
+            //foreach (ProfielKeuze profiel in profielKeuzes)
+            //{
+            //    //GameObject prefabToUse = profiel.avatar == "Jongen" ? JongenPrefab.gameObject : MeisjePrefab.gameObject;
+            //    Transform spawnPosition = SpawnPosities[aantalProfielenAangemaakt % SpawnPosities.Length];
+            //    GameObject newButton = Instantiate(prefabToUse, spawnPosition.position, Quaternion.identity, ProfilePrison.transform);
 
-                TMP_Text textComponent = newButton.GetComponentInChildren<TMP_Text>();
-                if (textComponent != null)
-                    textComponent.text = profiel.name;
+            //    TMP_Text textComponent = newButton.GetComponentInChildren<TMP_Text>();
+            //    if (textComponent != null)
+            //        textComponent.text = profiel.name;
 
-                if (textPrefab != null)
-                {
-                    GameObject newText = Instantiate(textPrefab, spawnPosition.position, Quaternion.identity);
-                    newText.transform.SetParent(newButton.transform, false);
+            //    if (textPrefab != null)
+            //    {
+            //        GameObject newText = Instantiate(textPrefab, spawnPosition.position, Quaternion.identity);
+            //        newText.transform.SetParent(newButton.transform, false);
 
-                    TMP_Text textPrefabComponent = newText.GetComponent<TMP_Text>();
-                    if (textPrefabComponent != null)
-                    {
-                        textPrefabComponent.text = profiel.name;
-                        newText.transform.localPosition = new Vector3(0, -73, 0);
-                        textPrefabComponent.fontSize = 50;
-                    }
-                }
+            //        TMP_Text textPrefabComponent = newText.GetComponent<TMP_Text>();
+            //        if (textPrefabComponent != null)
+            //        {
+            //            textPrefabComponent.text = profiel.name;
+            //            newText.transform.localPosition = new Vector3(0, -73, 0);
+            //            textPrefabComponent.fontSize = 50;
+            //        }
+            //    }
 
-                Button buttonComponent = newButton.GetComponent<Button>();
-                if (buttonComponent != null)
-                {
-                    buttonComponent.onClick.AddListener(() => SelectProfile(profiel));
-                }
+        //        Button buttonComponent = newButton.GetComponent<Button>();
+        //        if (buttonComponent != null)
+        //        {
+        //            buttonComponent.onClick.AddListener(() => SelectProfile(profiel));
+        //        }
 
-                aantalProfielenAangemaakt++;
-                DisplayProfileData(profiel);
-            }
+        //        aantalProfielenAangemaakt++;
+        //        DisplayProfileData(profiel);
+        //    }
         }
 
         public async void VerwijderGeselecteerdProfiel()

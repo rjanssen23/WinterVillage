@@ -8062,7 +8062,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!210 &1082409877
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -10216,7 +10216,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1423276838
 Transform:
   m_ObjectHideFlags: 0
@@ -11015,7 +11015,6 @@ MonoBehaviour:
   profielKeuze:
     id: 
     name: Tim
-    avatar: jongen
   userApiClient: {fileID: 44287818}
   profielkeuzeApiClient: {fileID: 44287816}
 --- !u!4 &1456300847

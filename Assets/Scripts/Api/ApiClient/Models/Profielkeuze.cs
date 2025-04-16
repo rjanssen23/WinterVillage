@@ -12,5 +12,5 @@ public class ProfielKeuze
     public string id; // JSON veld, string in plaats van Guid
 
     public string name; // JSON veld, kleine letters
-    public string avatar; // JSON veld, kleine letters
+   // public string avatar; // JSON veld, kleine letters
 }

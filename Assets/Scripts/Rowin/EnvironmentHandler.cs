@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Networking;
 
 public class EnvironmentHandler : MonoBehaviour
 {
@@ -101,12 +102,56 @@ public class EnvironmentHandler : MonoBehaviour
         {
             button.gameObject.SetActive(true); // Show the environment button
             Debug.Log($"{label} clicked - Activated {button.name} with name '{inputText}'");
+
+            // Prepare the data to send in the POST request
+            string jsonData = "{\"name\":\"" + inputText + "\"}"; // Construct JSON string
+
+            // Send POST request
+            SendEnvironmentDataToBackendAsync(jsonData);
         }
         else
         {
             Debug.LogWarning($"{label} clicked - Name field is empty, cannot activate {button.name}");
         }
     }
+
+    private string GetEnvironmentName(string label)
+    {
+        // You can customize this logic based on how you want to fetch the environment's name.
+        // For example, you can check which button was clicked and return the corresponding environment name:
+
+        if (label == "Environment 1")
+            return nameInput1.text; // This will be the input field's text for Environment 1.
+        if (label == "Environment 2")
+            return nameInput2.text; // Environment 2
+        if (label == "Environment 3")
+            return nameInput3.text; // Environment 3
+
+        return string.Empty; // Default return if label doesn't match
+    }
+
+    public async void SendEnvironmentDataToBackendAsync(string jsonData)
+    {
+        UnityWebRequest request = new UnityWebRequest("https://avansict2235837.azurewebsites.net/Environment", "POST");
+        byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(jsonData);
+        request.uploadHandler = new UploadHandlerRaw(jsonBytes);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        await request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Data sent successfully!");
+        }
+        else
+        {
+            Debug.LogError("Error sending data: " + request.error);
+        }
+    }
+
+
+
 
     // Activates a specific environment and switches to the environment scene
     void ActivateEnvironment(GameObject environment, string label)
@@ -115,8 +160,14 @@ public class EnvironmentHandler : MonoBehaviour
         DeactivateAllEnvironments();    // Turn off all environments
         scene3.SetActive(true);         // Show the environment scene
         environment.SetActive(true);    // Activate the selected environment
+
         Debug.Log($"{label} is now active");
     }
+
+
+    // Coroutine to send data to the backend
+
+
 
     // Updates the text on the environment button based on the input field's value
     void UpdateText(string newText)
