@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Networking;
+using System.Collections;
+
 
 public class EnvironmentHandler : MonoBehaviour
 {
@@ -19,6 +21,8 @@ public class EnvironmentHandler : MonoBehaviour
     public Button goBackToMenuButton1;
     public Button goBackToMenuButton2;
     public Button goBackToMenuButton3;
+
+
 
     // The actual environment GameObjects that will be activated/deactivated
     public GameObject environment1;
@@ -132,7 +136,13 @@ public class EnvironmentHandler : MonoBehaviour
 
     public async void SendEnvironmentDataToBackendAsync(string jsonData)
     {
-        UnityWebRequest request = new UnityWebRequest("https://avansict2235837.azurewebsites.net/Environment", "POST");
+        string url = "https://avansict2235837.azurewebsites.net/Environment";
+
+        Debug.Log("Preparing to send data to backend...");
+        Debug.Log($"URL: {url}");
+        Debug.Log($"JSON Payload: {jsonData}");
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
         byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(jsonData);
         request.uploadHandler = new UploadHandlerRaw(jsonBytes);
         request.downloadHandler = new DownloadHandlerBuffer();
@@ -140,15 +150,24 @@ public class EnvironmentHandler : MonoBehaviour
 
         await request.SendWebRequest();
 
+        Debug.Log($"Response Code: {request.responseCode}");
+
         if (request.result == UnityWebRequest.Result.Success)
         {
             Debug.Log("Data sent successfully!");
+            Debug.Log($"Response Text: {request.downloadHandler.text}");
         }
         else
         {
-            Debug.LogError("Error sending data: " + request.error);
+            Debug.LogError("Error sending data:");
+            Debug.LogError($"URL: {url}");
+            Debug.LogError($"Payload: {jsonData}");
+            Debug.LogError($"Status Code: {request.responseCode}");
+            Debug.LogError($"Error Message: {request.error}");
+            Debug.LogError($"Response Text: {request.downloadHandler.text}");
         }
     }
+
 
 
 
@@ -186,4 +205,59 @@ public class EnvironmentHandler : MonoBehaviour
             environmentButtonText3.text = string.IsNullOrEmpty(newText) ? "Environment 3" : newText;
         }
     }
+    public void DeleteEnvironment(int index)
+    {
+        string environmentName = GetEnvironmentName($"Environment {index}");
+
+        // Local UI clearing
+        switch (index)
+        {
+            case 1:
+                environmentButton1.gameObject.SetActive(false);
+                nameInput1.text = "";
+                environmentButtonText1.text = "Environment 1";
+                break;
+            case 2:
+                environmentButton2.gameObject.SetActive(false);
+                nameInput2.text = "";
+                environmentButtonText2.text = "Environment 2";
+                break;
+            case 3:
+                environmentButton3.gameObject.SetActive(false);
+                nameInput3.text = "";
+                environmentButtonText3.text = "Environment 3";
+                break;
+            default:
+                Debug.LogWarning("Invalid environment index: " + index);
+                return;
+        }
+
+        Debug.Log($"Environment {index} deleted.");
+
+        // Start coroutine to delete on backend
+        StartCoroutine(DeleteEnvironmentFromBackend(environmentName));
+    }
+    private IEnumerator DeleteEnvironmentFromBackend(string environmentName)
+    {
+        string url = $"https://avansict2235837.azurewebsites.net/Environment/{UnityWebRequest.EscapeURL(environmentName)}";
+
+        UnityWebRequest request = UnityWebRequest.Delete(url);
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"Successfully deleted environment: {environmentName}");
+        }
+        else
+        {
+            Debug.LogError($"Failed to delete environment: {environmentName}");
+            Debug.LogError($"Status Code: {request.responseCode}");
+            Debug.LogError($"Error Message: {request.error}");
+        }
+    }
+
+
+
 }

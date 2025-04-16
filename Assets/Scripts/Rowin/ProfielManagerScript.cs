@@ -182,7 +182,7 @@ namespace ProfielManagerScript
             ProfielKeuze newProfielKeuze = new ProfielKeuze
             {
                 name = ProfielNaam.text,
-               // avatar = isJongenGekozen ? "Jongen" : "Meisje",
+                // avatar = isJongenGekozen ? "Jongen" : "Meisje",
             };
 
             if (profielkeuzeApiClient == null)
@@ -322,15 +322,15 @@ namespace ProfielManagerScript
             //        }
             //    }
 
-        //        Button buttonComponent = newButton.GetComponent<Button>();
-        //        if (buttonComponent != null)
-        //        {
-        //            buttonComponent.onClick.AddListener(() => SelectProfile(profiel));
-        //        }
+            //        Button buttonComponent = newButton.GetComponent<Button>();
+            //        if (buttonComponent != null)
+            //        {
+            //            buttonComponent.onClick.AddListener(() => SelectProfile(profiel));
+            //        }
 
-        //        aantalProfielenAangemaakt++;
-        //        DisplayProfileData(profiel);
-        //    }
+            //        aantalProfielenAangemaakt++;
+            //        DisplayProfileData(profiel);
+            //    }
         }
 
         public async void VerwijderGeselecteerdProfiel()
