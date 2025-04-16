@@ -6,11 +6,11 @@ public class ExampleApp : MonoBehaviour
 {
     [Header("Test data")]
     public User user;
-    public ProfielKeuze profielKeuze;
+    public Environment profielKeuze;
 
     [Header("Dependencies")]
     public UserApiClient userApiClient;
-    public ProfielkeuzeApiClient profielkeuzeApiClient;
+    public EnvironmentApiClient profielkeuzeApiClient;
 
     #region Login
 
@@ -63,12 +63,12 @@ public class ExampleApp : MonoBehaviour
     [ContextMenu("ProfielKeuze/Read all")]
     public async void ReadProfielKeuzes()
     {
-        IWebRequestReponse webRequestResponse = await profielkeuzeApiClient.ReadProfielKeuzes();
+        IWebRequestReponse webRequestResponse = await profielkeuzeApiClient.ReadEnvironments();
 
         switch (webRequestResponse)
         {
-            case WebRequestData<List<ProfielKeuze>> dataResponse:
-                List<ProfielKeuze> profielKeuzes = dataResponse.Data;
+            case WebRequestData<List<Environment>> dataResponse:
+                List<Environment> profielKeuzes = dataResponse.Data;
                 Debug.Log("List of profielKeuzes: ");
                 // TODO: Handle succes scenario.
                 break;
@@ -85,11 +85,11 @@ public class ExampleApp : MonoBehaviour
     [ContextMenu("ProfielKeuze/Create")]
     public async void CreateProfielKeuze()
     {
-        IWebRequestReponse webRequestResponse = await profielkeuzeApiClient.CreateProfielKeuze(profielKeuze);
+        IWebRequestReponse webRequestResponse = await profielkeuzeApiClient.CreateEnvironment(profielKeuze);
 
         switch (webRequestResponse)
         {
-            case WebRequestData<ProfielKeuze> dataResponse:
+            case WebRequestData<Environment> dataResponse:
                 //profielKeuze.id = dataResponse.Data.id;
                 // TODO: Handle succes scenario.
                 break;

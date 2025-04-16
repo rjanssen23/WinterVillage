@@ -4,9 +4,17 @@ using TMPro;
 using UnityEngine.Networking;
 using System.Collections;
 
-
 public class EnvironmentHandler : MonoBehaviour
 {
+    // JWT token (replace with your actual token)
+    private string jwtToken = "yourJwtToken";
+
+    // Serializable DTO to send to backend
+    [System.Serializable]
+    public class UserEnvironmentDTO
+    {
+        public string name;
+    }
     // Buttons used to create new environments
     public Button environmentCreatorButton1;
     public Button environmentCreatorButton2;
@@ -69,9 +77,9 @@ public class EnvironmentHandler : MonoBehaviour
         goBackToMenuButton3.onClick.AddListener(ReturnToMenu);
 
         // Add listeners to change the value of environmentName
-        nameInput1.onValueChanged.AddListener(UpdateText);
-        nameInput2.onValueChanged.AddListener(UpdateText);
-        nameInput3.onValueChanged.AddListener(UpdateText);
+        nameInput1.onEndEdit.AddListener((text) => UpdateText(nameInput1, environmentButtonText1));
+        nameInput2.onEndEdit.AddListener((text) => UpdateText(nameInput2, environmentButtonText2));
+        nameInput3.onEndEdit.AddListener((text) => UpdateText(nameInput3, environmentButtonText3));
     }
 
     // Initializes the UI by hiding the environment scene and deactivating all environments
@@ -98,6 +106,7 @@ public class EnvironmentHandler : MonoBehaviour
     }
 
     // Tries to activate a selection button only if the input field has a non-empty name
+    // Tries to activate a selection button only if the input field has a non-empty name
     void TryActivateButton(TMP_InputField input, Button button, string label)
     {
         string inputText = input.text.Trim(); // Trim whitespace
@@ -107,8 +116,9 @@ public class EnvironmentHandler : MonoBehaviour
             button.gameObject.SetActive(true); // Show the environment button
             Debug.Log($"{label} clicked - Activated {button.name} with name '{inputText}'");
 
-            // Prepare the data to send in the POST request
-            string jsonData = "{\"name\":\"" + inputText + "\"}"; // Construct JSON string
+            // Prepare the DTO object
+            UserEnvironmentDTO env = new UserEnvironmentDTO { name = inputText };
+            string jsonData = JsonUtility.ToJson(env);
 
             // Send POST request
             SendEnvironmentDataToBackendAsync(jsonData);
@@ -133,7 +143,6 @@ public class EnvironmentHandler : MonoBehaviour
 
         return string.Empty; // Default return if label doesn't match
     }
-
     public async void SendEnvironmentDataToBackendAsync(string jsonData)
     {
         string url = "https://avansict2235837.azurewebsites.net/Environment";
@@ -147,6 +156,7 @@ public class EnvironmentHandler : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(jsonBytes);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
+        request.SetRequestHeader("Authorization", "Bearer " + jwtToken); // Add token
 
         await request.SendWebRequest();
 
@@ -189,21 +199,11 @@ public class EnvironmentHandler : MonoBehaviour
 
 
     // Updates the text on the environment button based on the input field's value
-    void UpdateText(string newText)
+    void UpdateText(TMP_InputField inputField, TextMeshProUGUI buttonText)
     {
-        // Update the button text based on the corresponding input field
-        if (nameInput1.isFocused)
-        {
-            environmentButtonText1.text = string.IsNullOrEmpty(newText) ? "Environment 1" : newText;
-        }
-        if (nameInput2.isFocused)
-        {
-            environmentButtonText2.text = string.IsNullOrEmpty(newText) ? "Environment 2" : newText;
-        }
-        if (nameInput3.isFocused)
-        {
-            environmentButtonText3.text = string.IsNullOrEmpty(newText) ? "Environment 3" : newText;
-        }
+        string newText = inputField.text.Trim();
+        // Only update the button text if the input field is not empty
+        buttonText.text = string.IsNullOrEmpty(newText) ? buttonText.text : newText;
     }
     public void DeleteEnvironment(int index)
     {
